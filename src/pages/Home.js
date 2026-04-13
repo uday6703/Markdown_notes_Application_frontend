@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import NotesList from "../components/NotesList";
 import Editor from "../components/Editor";
 import Preview from "../components/Preview";
@@ -87,7 +87,7 @@ function Home() {
     localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
-  const upsertNoteInList = (note) => {
+  const upsertNoteInList = useCallback((note) => {
     setNotes((prevNotes) => {
       const existingIndex = prevNotes.findIndex((item) => item.id === note.id);
 
@@ -100,9 +100,9 @@ function Home() {
       updated.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
       return updated;
     });
-  };
+  }, []);
 
-  const persistNote = async (noteToSave) => {
+  const persistNote = useCallback(async (noteToSave) => {
     if (!noteToSave.title.trim() && !noteToSave.content.trim()) {
       return;
     }
@@ -133,7 +133,7 @@ function Home() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [upsertNoteInList]);
 
   const onTitleChange = (value) => {
     skipNextAutosaveRef.current = false;
@@ -203,7 +203,7 @@ function Home() {
         clearTimeout(autoSaveTimerRef.current);
       }
     };
-  }, [activeNote.title, activeNote.content]);
+  }, [activeNote, persistNote]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
