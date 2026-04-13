@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const defaultApiUrl = "https://markdown-notes-application-backend-1.onrender.com/api";
+
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000/api",
+  baseURL: process.env.REACT_APP_API_URL || defaultApiUrl,
   headers: {
     "Content-Type": "application/json"
   }
